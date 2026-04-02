@@ -167,9 +167,12 @@ def cmd_journal(args):
 
 def _build_config(args) -> dict:
     """Build the config dict from CLI args."""
+    from src.memory import EvalMemory
+
     config = {
         "db_path": getattr(args, "db_path", ".chroma"),
         "verbose": getattr(args, "verbose", False),
+        "memory": EvalMemory(),
     }
 
     # Session continuity via --resume

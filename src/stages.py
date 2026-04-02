@@ -66,6 +66,7 @@ def run_pipeline(
         )
 
     config = config or {}
+    config["current_stage"] = stage
     response = Response()
     verbose = config.get("verbose", False)
 

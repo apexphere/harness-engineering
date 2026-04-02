@@ -152,10 +152,29 @@ RESPONSE_JSON_SCHEMA = {
 def layer_prompts(query: str, response: Response, config: dict) -> Response:
     """Layer 1: Build the system prompt and store it in config for later layers.
 
-    This layer doesn't call the model — it prepares the prompt that Layer 2
-    (tools) or Layer 6 (orchestration) will use when making the API call.
+    This layer doesn't call the model — it prepares the prompt that Layer 6
+    (orchestration) will use when making the claude -p call.
+
+    If eval memory is available, retrieves past results for similar queries
+    and appends them to the system prompt. The LLM sees what went wrong
+    before and can avoid the same failures.
     """
-    config["system_prompt"] = KNOWLEDGE_ASSISTANT_SYSTEM
+    system_prompt = KNOWLEDGE_ASSISTANT_SYSTEM
+
+    # Inject memory context if available
+    memory = config.get("memory")
+    memory_matches = 0
+    if memory is not None:
+        matches = memory.search(query, n_results=3)
+        memory_matches = len(matches)
+        memory_context = memory.format_for_prompt(matches)
+        if memory_context:
+            system_prompt = f"{system_prompt}\n\n{memory_context}"
+
+    config["system_prompt"] = system_prompt
     config["json_schema"] = RESPONSE_JSON_SCHEMA
     config["user_query"] = query
-    return response.with_metadata("system_prompt_tokens", str(len(KNOWLEDGE_ASSISTANT_SYSTEM.split())))
+
+    result = response.with_metadata("system_prompt_tokens", str(len(system_prompt.split())))
+    result = result.with_metadata("memory_matches", str(memory_matches))
+    return result

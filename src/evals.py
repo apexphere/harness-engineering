@@ -246,6 +246,19 @@ def layer_evals(query: str, response: Response, config: dict) -> Response:
 
     passed = all(checks.values())
     checks_str = ", ".join(f"{k}={'✓' if v else '✗'}" for k, v in checks.items())
+    failures = [k for k, v in checks.items() if not v]
+
+    # Store results in memory so future queries can learn from past failures
+    memory = config.get("memory")
+    if memory is not None:
+        score = sum(1 for v in checks.values() if v)
+        memory.store(
+            query=query,
+            stage=config.get("current_stage", 0),
+            score=score,
+            max_score=len(checks),
+            failures=failures,
+        )
 
     return (
         response
