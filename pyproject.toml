@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "harness-engineering"
+version = "0.1.0"
+description = "Learn harness engineering through a working research assistant"
+requires-python = ">=3.11"
+# No LangChain, no LlamaIndex. This is a learning tool — frameworks hide
+# the layers you're trying to understand. Build the harness by hand first,
+# then you'll know exactly what frameworks abstract away.
+dependencies = [
+    "chromadb>=1.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-asyncio>=0.24",
+]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]

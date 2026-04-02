@@ -1,5 +1,24 @@
 # harness-engineering
 
+Learn harness engineering through a personal knowledge assistant.
+
+## Setup
+
+```bash
+pip install -e ".[dev]"
+```
+
+## Architecture
+
+The pipeline is a deterministic containment structure around `claude -p`
+(Claude Code headless mode). No API key needed — uses your subscription.
+
+## Testing
+
+```bash
+pytest tests/ -v    # 115 tests
+```
+
 ## Skill routing
 
 When the user's request matches an available skill, ALWAYS invoke it using the Skill

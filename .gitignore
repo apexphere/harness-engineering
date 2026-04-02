@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+*.egg-info/
+dist/
+.env
+.venv/
+.gstack/
+.chroma/
+.cache/
+sample_notes/
+golden_set.json
+journal/
